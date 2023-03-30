@@ -10,10 +10,10 @@ from sklearn.decomposition import TruncatedSVD
 from sklearn.preprocessing import LabelEncoder
 
 def remove_headers_and_signatures(text):
-    # Remove headers
+    # Removing headers
     text = re.sub(r"(?i)^(From|To|Cc|Bcc|Subject|Sent|Date): .+\n?", "", text, flags=re.MULTILINE)
 
-    # Remove signature lines
+    # Removing signature lines
     text = re.sub(r"(?i)^(--|\.\.\.|\*\*\*)\n?.*?$", "", text, flags=re.MULTILINE)
 
     return text
@@ -52,13 +52,18 @@ if __name__ == "__main__":
     test_labels = ["test" if random.random() < args.testsize / 100 else "train" for _ in range(len(documents))]
 
     table = pd.DataFrame(X_reduced)
+    table["email_body"] = documents
     table["author"] = authors
     table["test_train"] = test_labels
     
-    # Load the data
-    data = pd.read_csv(args.outputfile)
+    # Removing the "email_body" column before saving the data
+    table = table.drop("email_body", axis=1)
 
-    # Convert the labels to numerical values
+    # Loading the data
+    data = pd.read_csv(args.outputfile)
+    
+
+    # Converting the labels to numerical values
     label_encoder = LabelEncoder()
     data['author'] = label_encoder.fit_transform(data['author'])
 
